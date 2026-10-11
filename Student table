@@ -1,0 +1,35 @@
+#Table creation
+create table student01 (
+USN varchar2(10) constraint ss1 primary key,
+Name varchar2(50) constraint ss2 not null,
+DOB date,
+Branch varchar2(30),
+m1 number(3) constraint ss3 check (m1>=0),
+m2 number(3) constraint ss4 check (m2>=0),
+m3 number(3) constraint ss5 check (m3>=0),
+Total number(10),
+GPA number(8,2));
+
+#data insertion
+insert into student01 (USN, Name, DOB, Branch, m1, m2, m3) values ('1001','Sujal','10-Jan-2004','CSA', 90, 80, 95);
+insert into student01 (USN, Name, DOB, Branch, m1, m2, m3) values ('1002','Musthaq','21-oct-2004','BCA', 89, 90, 92);
+insert into student01 (USN, Name, DOB, Branch, m1, m2, m3) values ('1003','Gagan','6-Dec-2003','MCA', 90, 93, 97);
+insert into student01 (USN, Name, DOB, Branch, m1, m2, m3) values ('1004','Eshwar','1-Feb-2003','MBA', 93, 86, 82);
+insert into student01 (USN, Name, DOB, Branch, m1, m2, m3) values ('1005','Prajwal','17-Apr-2004','BBA', 91, 79, 85);
+insert into student01 (USN, Name, DOB, Branch, m1, m2, m3) values ('1006','Sneha','18-Jul-2004','BBA', 90, 89, 85);
+select * from student01;
+
+#queries
+update student01 set total = m1+m2+m3;
+
+update student01 set GPA = total/3;
+
+SELECT *
+FROM student01
+WHERE TO_CHAR(DOB, 'YYYY') LIKE '%2003%';
+
+select  * from student01 where branch = 'CSA';
+
+select branch, max(GPA) from student01 group by branch;
+
+select * from student01 where name like 'S%';
