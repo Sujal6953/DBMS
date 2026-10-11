@@ -1,0 +1,97 @@
+create table branch001 ( 
+Branch_Id number(4) constraint b1 primary key,
+Branch_Name varchar(230) constraint b2 not null,
+HOD varchar2(40));
+
+create table author001(
+Author_Id number(4) constraint a1 primary key,
+Author_Name varchar2(30) constraint a2 not null,
+Country varchar2(20),
+Age number(3));
+
+create table student001(
+USN varchar2(10) constraint s1 primary key,
+Name varchar2(20) constraint s2 not null,
+Address varchar2(30),
+Branch_Id number(4) constraint s3 references branch001(Branch_Id),
+sem number(2));
+
+create table book001(
+Book_Id number(4) constraint bb1 primary key,
+Book_Name varchar2(40) constraint bb2 not null,
+Author_Id number(4) constraint bb3 references author001(Author_Id),
+Publisher varchar2(30),
+Branch_Id number(4) constraint bb4 references branch001(Branch_Id));
+
+create table borrow001(
+USN varchar2(10) constraint bbb1 references student001(USN),
+Book_Id number(4) constraint bbb2 references book001(Book_Id),
+Borrowed_Date date,
+constraint bbb3 primary key(USN,Book_Id));
+
+#Table data insertion
+insert into branch001 values( 1,'MCA','Vineeta');
+insert into branch001 values( 2,'MBA','Nagarjuna');
+insert into branch001 values( 3,'Science','Nagendra');
+insert into branch001 values( 4,'Commerce','Vaishnavi');
+insert into branch001 values( 5,'CSA','Sneha');
+select * from branch001;
+
+insert into author001 values(101, 'Salman Rushdie', 'India', 40);
+insert into author001 values(102, 'Jane Austen', 'England', 30);
+insert into author001 values(103, 'Paulo Coelho', 'Brazil', 55);
+insert into author001 values(104, 'Haruki Murakami', 'Japan', 42);
+insert into author001 values(105, 'Fyodor Dostoevsky', 'Russia', 38);
+select * from author001;
+
+insert into student001 values('SS01','Kartik','Karwar',2,1);
+insert into student001 values('SS02','Malthi','Honnavar',4,2);
+insert into student001 values('SS03','Faiha','Dandeli',5,1);
+insert into student001 values('SS04','Unnati','Haliyal',3,2);
+insert into student001 values('SS05','Sujal','West Bengal',1,2);
+select * from student001;
+
+insert into book001 values(1001, 'Midnights Children', 101, 'Jonathan Cape', 2);
+insert into book001 values(1002, 'Pride and Prejudice', 102, 'Penguin Classics', 4);
+insert into book001 values(1003, 'The Alchemist', 103, 'HarperCollins', 3);
+insert into book001 values(1004, 'Norwegian Wood', 104, 'Kodansha', 5);
+insert into book001 values(1005, 'Crime and Punishment', 105, 'The Russian Messenger', 1);
+select * from book001;
+
+insert into borrow001 values('SS05', 1003, '10-May-2026');
+insert into borrow001 values('SS05', 1005, '11-Jun-2026');
+insert into borrow001 values('SS05', 1004, '16-Aug-2026');
+insert into borrow001 values('SS04', 1003, '15-May-2026');
+insert into borrow001 values('SS03', 1002, '10-May-2026');
+insert into borrow001 values('SS02', 1001, '21-Feb-2026');
+select * from borrow001;
+
+#queries
+Select * from student001 where 
+sem=2 and Branch_Id = 
+(Select Branch_Id from branch001 where
+Branch_Name = 'MCA');
+
+Select * from student001 where USN not in (select USN from Borrow001);
+
+Select student001.USN, student001.Name, branch001.Branch_Name, book001.Book_Name, author001.Author_Name, borrow001.Borrowed_Date
+from student001, branch001, book001, author001, borrow001 
+where student001.Branch_Id = branch001.Branch_Id and 
+book001.Author_Id = author001.Author_Id and
+borrow001.USN = student001.USN and 
+borrow001.Book_Id = book001.Book_Id and
+sem=2 and
+branch001.Branch_Name = 'MCA';
+
+Select Author_Id, count(*) from book001 group by Author_id;
+
+Select * from student001 where USN in
+(Select USN from borrow001 group by USN having count(*)>=2);
+
+Select * from student001 where exists 
+(Select USN from borrow001, Book001 where 
+book001.Book_Id = Borrow001.Book_Id and 
+student001.USN  = borrow001.USN group by 
+USN having count (distinct Author_Id) > 1);
+
+Select Book_Name from Book001 order by Book_Name desc;
