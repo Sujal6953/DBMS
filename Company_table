@@ -1,0 +1,170 @@
+#table creation
+create table department01(
+DNO number(4) constraint d1 primary key,
+DNAME varchar2(30) constraint d2 not null,
+MGRSSN number(4),
+MGRSTARTDATE date);
+
+desc department01;
+
+create table employee01(
+SSN number(4) constraint e1 primary key,
+FNAME varchar2(30),
+MINT varchar2(30),
+LNAME varchar2(30),
+BDATE date,
+ADDRESS varchar2(50),
+SEX varchar(10),
+SALARY number(10,2),
+SUPERSSN number(4),
+DNO number(4) constraint e2 references department01(DNO));
+
+desc employee01;
+
+create table deptlocations01(
+DNO number(4) constraint dd1 references department01(DNO),
+DLOCATION varchar2(30));
+
+desc deptlocations01;
+
+create table project01(
+PNUMBER number(4) constraint p1 primary key,
+PNAME varchar2(30) constraint p2 not null,
+PLOCATION varchar2(50),
+DNO number(4) constraint p3 references Department01(DNO));
+
+desc project01;
+
+create table workson01(
+ESSN number(4) constraint w1 references employee01(SSN),
+PNUMBER number(4) constraint w2 references project01(PNUMBER),
+HOURS number(4));
+
+desc workson01;
+
+create table dependent01(
+ESSN number(4) constraint ddd1 references employee01(SSN),
+DEPENDENTNAME varchar2(40),
+SEX varchar2(20),
+BDATE date,
+RELATIONSHIP varchar2(50));
+
+desc dependent01;
+
+#data insertion
+INSERT INTO DEPARTMENT01 VALUES (1, 'Accounts', 101, '12-JAN-2004');
+INSERT INTO DEPARTMENT01 VALUES (2, 'Research', 102, '15-MAR-2005');
+INSERT INTO DEPARTMENT01 VALUES (3, 'Administration', 103, '20-JUN-2006');
+INSERT INTO DEPARTMENT01 VALUES (4, 'IT', 104, '10-AUG-2007');
+INSERT INTO DEPARTMENT01 VALUES (5, 'Finance', 105, '05-SEP-2008');
+select * from department01;
+
+INSERT INTO EMPLOYEE01 VALUES (101, 'John', 'A', 'Smith', '15-FEB-1985', 'Bangalore', 'Male', 55000, NULL, 1);
+INSERT INTO EMPLOYEE01 VALUES (102, 'Robert', 'B', 'Brown', '20-MAR-1988', 'Chennai', 'Male', 62000, 101, 2);
+INSERT INTO EMPLOYEE01 VALUES (103, 'Mary', 'C', 'Jones', '10-JUL-1990', 'Mumbai', 'Female', 45000, 101, 1);
+INSERT INTO EMPLOYEE01 VALUES (104, 'David', 'D', 'Wilson', '25-AUG-1992', 'Delhi', 'Male', 48000, 102, 2);
+INSERT INTO EMPLOYEE01 VALUES (105, 'Jennifer', 'E', 'Taylor', '12-SEP-1995', 'Hyderabad', 'Female', 52000, 102, 2);
+INSERT INTO EMPLOYEE01 VALUES (106, 'Michael', 'F', 'Anderson', '05-JAN-1987', 'Pune', 'Male', 38000, 103, 3);
+INSERT INTO EMPLOYEE01 VALUES (107, 'Linda', 'G', 'Thomas', '18-NOV-1991', 'Bangalore', 'Female', 42000, 104, 4);
+INSERT INTO EMPLOYEE01 VALUES (108, 'James', 'H', 'Jackson', '22-APR-1994', 'Mysore', 'Male', 46000, 105, 5);
+INSERT INTO EMPLOYEE01 VALUES (109, 'Patricia', 'I', 'White', '30-JUN-1996', 'Chennai', 'Female', 41000, 105, 5);
+INSERT INTO EMPLOYEE01 VALUES (110, 'Daniel', 'J', 'Harris', '14-OCT-1993', 'Bangalore', 'Male', 58000, 105, 5);
+select * from employee01;
+
+INSERT INTO DEPTLOCATIONS01 VALUES (1, 'Bangalore');
+INSERT INTO DEPTLOCATIONS01 VALUES (2, 'Chennai');
+INSERT INTO DEPTLOCATIONS01 VALUES (3, 'Mumbai');
+INSERT INTO DEPTLOCATIONS01 VALUES (4, 'Hyderabad');
+INSERT INTO DEPTLOCATIONS01 VALUES (5, 'Delhi');
+select * from deptlocations01;
+
+INSERT INTO PROJECT01 VALUES (101, 'Payroll System', 'Bangalore', 1);
+INSERT INTO PROJECT01 VALUES (102, 'Research Database', 'Chennai', 2);
+INSERT INTO PROJECT01 VALUES (103, 'Employee Management', 'Mumbai', 3);
+INSERT INTO PROJECT01 VALUES (104, 'Network Upgrade', 'Hyderabad', 4);
+INSERT INTO PROJECT01 VALUES (105, 'Financial Analysis', 'Delhi', 5);
+select * from project01;
+
+INSERT INTO WORKSON01 VALUES (101, 101, 20);
+INSERT INTO WORKSON01 VALUES (103, 101, 15);
+INSERT INTO WORKSON01 VALUES (102, 102, 25);
+INSERT INTO WORKSON01 VALUES (104, 102, 20);
+INSERT INTO WORKSON01 VALUES (105, 102, 15);
+INSERT INTO WORKSON01 VALUES (106, 103, 30);
+INSERT INTO WORKSON01 VALUES (101, 103, 10);
+INSERT INTO WORKSON01 VALUES (107, 104, 25);
+INSERT INTO WORKSON01 VALUES (102, 104, 20);
+INSERT INTO WORKSON01 VALUES (105, 104, 15);
+INSERT INTO WORKSON01 VALUES (108, 105, 20);
+INSERT INTO WORKSON01 VALUES (109, 105, 25);
+INSERT INTO WORKSON01 VALUES (110, 105, 30);
+INSERT INTO WORKSON01 VALUES (104, 105, 10);
+INSERT INTO WORKSON01 VALUES (101, 105, 10);
+select * from workson01;
+
+INSERT INTO DEPENDENT01 VALUES (101, 'Alice Smith', 'Female', '10-MAY-2010', 'Daughter');
+INSERT INTO DEPENDENT01 VALUES (102, 'Brian Brown', 'Male', '15-JUN-2012', 'Son');
+INSERT INTO DEPENDENT01 VALUES (103, 'Carol Jones', 'Female', '20-AUG-2011', 'Daughter');
+INSERT INTO DEPENDENT01 VALUES (105, 'Kevin Taylor', 'Male', '05-SEP-2015', 'Son');
+INSERT INTO DEPENDENT01 VALUES (108, 'Emma Jackson', 'Female', '12-DEC-2018', 'Daughter');
+select * from dependent01;
+
+#queries
+select sum(salary), max(salary), min(salary), avg (salary) from employee01;
+
+select count(*) from employee01;
+
+select count(*) from employee01 where DNO =
+( Select DNO from department01 where DNAME = 'Research')
+ group by DNO;
+
+Select DNO, avg(salary), count(*) from employee01 group by dno;
+
+Select DNO, avg(Salary) from employee01 group by dno having avg(salary)>20000;
+
+select SSN, Salary, (Salary*10)/100+salary from employee01, department01 where 
+employee01.dno = department01.dno and dname = 'Research';
+
+select sum(salary), avg(salary), max(salary), min(salary) from employee01, department01 where
+employee01.dno=department01.dno and dname='Accounts';
+
+select fname,mint,lname from employee01 where exists
+(select pnumber from project01 where dno=5 and pnumber in 
+(select pno from workson01 where essn = ssn));
+
+select dname, count(*) from employee01, department01 where 
+employee01.dno = department01.dno group by
+dname having count(*)> =2;
+
+select pnumber, pname, count(*) from project01, workson01 where 
+project01.pnumber = workson01.pno group by pnumber, pname;
+
+select fname, mint, lname from employee01 where 
+to_char(bdate,'YYYY') like '%1990';
+
+select dname,count(*) from employee01, department01 where 
+employee01.dno=department01.dno and
+salary>40000 group by dname having count(*)>=2;
+
+select pnumber,pname, count(*) from project01, workson01 where
+project01.pnumber = workson01.pno group by pnumber, pname having count(*)>2;
+
+create view v1 as 
+(select fname, mint, lname, pname, hours from employee01, workson01, project01 where
+employee01.ssn = workson01.essn and project01.pnumber = workson01.pno);
+
+select * from v1 where hours>10;
+
+drop view v1;
+
+create view v2 as select * from employee01 where dno=5 with check option;
+select * from v2;
+
+drop view v2;
+
+Alter table department01 modify dname varchar2(50);
+desc department01;
+
+truncate table dependent01;
+
+drop table dependent01;
